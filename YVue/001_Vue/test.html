@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script type="module">
+        import Vue from './src/index.js';
+
+        const instance = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    testStr: '测试一',
+                    testArr: [1, 2, 4, { test: 'arr item test' }]
+                }
+            }
+        });
+
+        setTimeout(() => {
+            console.log(instance.testStr);
+            instance.testStr = '测试二';
+
+            instance.testArr[3].test = '888';
+        }, 2000);
+    </script>
+</body>
+
+</html>
