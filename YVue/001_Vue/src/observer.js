@@ -2,8 +2,12 @@ import { def } from './utils.js';
 import protoAgument from './protoAgument.js';
 import observe from './observe.js';
 import defineReactive from './defineReactive.js';
+import Dep from './Dep.js';
 
 export default function Observer(value) {
+    // 为对象本身设置一个 dep, 对象更新本身时使用
+    this.dep = new Dep();
+
 	// 设置 __ob__ 属性, 值为 this, 标识当前对象已经是一个响应式对象了
 	def(value, '__ob__', this);
 
@@ -19,7 +23,7 @@ export default function Observer(value) {
 	}
 }
 
-// 遍历数组的每个元素，为每个元素设置响应式
+// 遍历数组的每个元素，为每个元素非原始值设置响应式
 Observer.prototype.observeArray = function (arr) {
 	for (const item of arr) {
 		observe(item);

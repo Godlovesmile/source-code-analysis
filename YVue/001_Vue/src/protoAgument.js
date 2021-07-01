@@ -20,7 +20,23 @@ methodsToPatch.forEach((method) => {
 		const result = arrayProto[method].apply(this, args);
 
 		// 2. notify change; 预留数组的检测变化, 响应式
-		console.log('array notify change');
+		console.log('array notify change', this);
+		let inserted;
+        const ob = this.__ob__;
+
+		switch (method) {
+			case 'push':
+			case 'unshift':
+				inserted = args;
+				break;
+			case 'splice':
+				inserted = args.slice(2);
+				break;
+		}
+		// 如果数组有新增元素, 对新增元素进行响应式处理
+		inserted.length && ob.observeArray(inserted);
+		// 依赖通知更新
+		ob.dep.notify();
 		return result;
 	});
 });
