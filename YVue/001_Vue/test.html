@@ -9,6 +9,10 @@
 </head>
 
 <body>
+    <div id="app">
+        {{ testStr }}
+    </div>
+
     <script type="module">
         import Vue from './src/index.js';
 
@@ -17,7 +21,7 @@
             data() {
                 return {
                     testStr: '测试一',
-                    testArr: [1, 2, 4, { test: 'arr item test' }]
+                    // testArr: [1, 2, 4, { test: 'arr item test' }]
                 }
             }
         });
@@ -26,7 +30,7 @@
             console.log(instance.testStr);
             instance.testStr = '测试二';
 
-            instance.testArr[3].test = '888';
+            // instance.testArr[3].test = '888';
         }, 2000);
     </script>
 </body>
