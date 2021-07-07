@@ -11,6 +11,12 @@
 <body>
     <div id="app">
         {{ testStr }}
+        <div v-on:click="handleClick"
+            style="width: 100px; line-height: 50px; background: #ecf5ff; text-align: center; cursor: pointer;">
+            count-click
+        </div>
+        <span>count: {{ count }}</span>
+        <img v-bind:src="bindimgsrc">
     </div>
 
     <script type="module">
@@ -21,17 +27,26 @@
             data() {
                 return {
                     testStr: '测试一',
+                    count: 1,
+                    bindimgsrc: 'https://wxmini-resource.hortorgames.com/background-image/Lark20210707-131542-1625635395.png',
                     // testArr: [1, 2, 4, { test: 'arr item test' }]
+                }
+            },
+            methods: {
+                handleClick() {
+                    console.log('=== click ===');
+                    this.count++;
+                    this.bindimgsrc = 'https://wxmini-resource.hortorgames.com/background-image/Lark20210707-131547-1625635387.png';
                 }
             }
         });
 
-        setTimeout(() => {
-            console.log(instance.testStr);
-            instance.testStr = '测试二';
+        // setTimeout(() => {
+        //     console.log(instance.testStr);
+        //     instance.testStr = '测试二';
 
-            // instance.testArr[3].test = '888';
-        }, 2000);
+        //     // instance.testArr[3].test = '888';
+        // }, 2000);
     </script>
 </body>
 

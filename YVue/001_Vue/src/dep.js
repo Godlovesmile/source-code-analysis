@@ -3,7 +3,7 @@ export default function Dep() {
 }
 
 // 实例化 Watcher 时进行赋值; 收集完成之后又赋值为 null
-// Dep.target = null;
+Dep.target = null;
 
 // 1. 收集 watcher
 Dep.prototype.depend = function () {
