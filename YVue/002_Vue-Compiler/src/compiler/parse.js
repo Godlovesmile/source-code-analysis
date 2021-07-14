@@ -1,6 +1,7 @@
 /*
  * 解析模板字符串, 生 AST 语法树
  */
+import { isUnaryTag } from '../utils.js';
 
 export default function parse(template) {
 	const stack = [];
@@ -64,7 +65,24 @@ export default function parse(template) {
 		const attrMap = parseAttrs(attrs);
 		// 生成 AST 对象
 		const elementAst = generateAST(tagName, attrMap);
+
+		if (!root) {
+			root = elementAst;
+		}
+
+		// 将 ast 对象, push 到栈中, 当遇到结束标签的时候就将栈顶的 ast 对象 pop 出来, 进行匹配处理
+		stack.push(elementAst);
+
+		// 自闭合标签, 则直接调用 end 方法, 进入闭合标签的处理截断, 不入栈处理
+		if (isUnaryTag(tagName)) {
+			processElement();
+		}
 	}
+
+	/*
+	 * 处理元素的闭合标签时会调用该方法
+	 */
+	function processElement() {}
 }
 
 /*
@@ -79,4 +97,17 @@ function parseAttrs(attrs) {
 		attrMap[attrKey] = attrValue.replace(/\s*/g, '');
 	}
 	return attrMap;
+}
+
+/*
+ * 生成 AST 对象
+ */
+function generateAST(tagName, attrMap) {
+	return {
+		// 元素节点
+		type: 1,
+		tag: tagName,
+		rawAttr: attrMap,
+		children: [],
+	};
 }

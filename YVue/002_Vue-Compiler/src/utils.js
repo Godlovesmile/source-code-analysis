@@ -23,3 +23,11 @@ export function def(obj, key, val, enumerable) {
 		configurable: true,
 	});
 }
+
+/*
+ * 是否闭合标签
+ */
+export function isUnaryTag(tagName) {
+	const unaryTag = ['input'];
+	return unaryTag.includes(tagName);
+}
