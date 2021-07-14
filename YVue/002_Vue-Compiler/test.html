@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        {{ testStr }}
+        <div v-on:click="handleClick"
+            style="width: 100px; line-height: 50px; background: #ecf5ff; text-align: center; cursor: pointer;">
+            count-click
+        </div>
+        <span>count: {{ count }}</span>
+        <img v-bind:src="bindimgsrc">
+        <input v-model="vmodelVal" />
+        <div>inputVal: {{ vmodelVal }}</div>
+        <div>
+            <p>
+                <label for="apple">apple</label>
+                <input v-model="checkboxVal" type="checkbox" name="apple" id="apple" />
+            </p>
+            <div>checkboxVal: {{ checkboxVal }}</div>
+        </div>
+        <div>
+            <select v-model="selectVal" name="pets" id="pet-select">
+                <option value="">--Please choose an option--</option>
+                <option value="dog">Dog</option>
+                <option value="cat">Cat</option>
+                <option value="hamster">Hamster</option>
+                <option value="parrot">Parrot</option>
+                <option value="spider">Spider</option>
+                <option value="goldfish">Goldfish</option>
+            </select>
+            <div>selectVal: {{ selectVal }}</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import Vue from './src/index.js';
+
+        const instance = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    testStr: '测试一',
+                    count: 1,
+                    bindimgsrc: 'https://wxmini-resource.hortorgames.com/background-image/Lark20210707-131542-1625635395.png',
+                    vmodelVal: 'vmodelVal',
+                    checkboxVal: 'checked',
+                    selectVal: 'dog'
+                    // testArr: [1, 2, 4, { test: 'arr item test' }]
+                }
+            },
+            methods: {
+                handleClick() {
+                    console.log('=== click ===');
+                    this.count++;
+                    // this.bindimgsrc = 'https://wxmini-resource.hortorgames.com/background-image/Lark20210707-131547-1625635387.png';
+                    // this.checkboxVal = this.checkboxVal ? '' : 'checked';
+                    this.checkboxVal = '';
+                }
+            }
+        });
+
+        // setTimeout(() => {
+        //     console.log(instance.testStr);
+        //     instance.testStr = '测试二';
+
+        //     // instance.testArr[3].test = '888';
+        // }, 2000);
+    </script>
+</body>
+
+</html>
