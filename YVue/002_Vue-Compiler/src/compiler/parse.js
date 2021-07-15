@@ -82,7 +82,24 @@ export default function parse(template) {
 	/*
 	 * 处理元素的闭合标签时会调用该方法
 	 */
-	function processElement() {}
+	function processElement() {
+		// 弹出栈顶元素, 进一步处理元素
+		const curEle = stack.pop();
+		const stackLen = stack.length;
+		const { tag, rawAttr } = curEle;
+
+		// 处理结果存放在 attr 对象上, 并删除 rawAttr 对象中相应的属性
+		curEle.attr = {};
+		const propertyArr = Object.keys(rawAttr);
+
+		if (propertyArr.includes('v-model')) {
+			// 处理 v-model 指令
+		} else if (propertyArr.find((i) => i.math(/^v-bind:(.*)/))) {
+			// 处理 v-bind 指令
+		} else if (propertyArr.find((i) => i.math(/^v-on:(.*)/))) {
+			// 处理 v-on 指令
+		}
+	}
 }
 
 /*
