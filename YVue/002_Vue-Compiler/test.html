@@ -6,13 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .btn {
+            width: 100px;
+            line-height: 50px;
+            background: #ecf5ff;
+            text-align: center;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
     <div id="app">
-        {{ testStr }}
-        <div v-on:click="handleClick"
-            style="width: 100px; line-height: 50px; background: #ecf5ff; text-align: center; cursor: pointer;">
+        <div v-on:click="handleClick" class="btn">
             count-click
         </div>
         <span>count: {{ count }}</span>

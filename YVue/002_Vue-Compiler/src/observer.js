@@ -32,7 +32,6 @@ Observer.prototype.observeArray = function (arr) {
 
 // 遍历对象属性, 为这些属性设置 getter, setter 拦截
 Observer.prototype.walk = function (obj) {
-    console.log('=== walk ===', obj);
 	for (let key in obj) {
 		defineReactive(obj, key, obj[key]);
 	}

@@ -1,7 +1,6 @@
 import Dep from './dep.js';
 
 export default function Watcher(cb) {
-	console.log('=== Watcher init ===');
 	// 回调函数, 负责更新 Dom 回调函数
 	this._cb = cb;
 	Dep.target = this;
@@ -11,6 +10,5 @@ export default function Watcher(cb) {
 }
 
 Watcher.prototype.update = function () {
-	console.log('=== watcher update ===');
     this._cb();
 };

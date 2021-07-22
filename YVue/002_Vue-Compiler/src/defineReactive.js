@@ -4,7 +4,6 @@ import Dep from './dep.js';
 export default function defineReactive(obj, key, val) {
 	const dep = new Dep();
 	// observe
-	console.log('=== defineReactive ===', obj, key, val);
 	const childObj = observe(val);
 
 	Object.defineProperty(obj, key, {
@@ -17,11 +16,11 @@ export default function defineReactive(obj, key, val) {
 					childObj.dep.depend();
 				}
 			}
-			console.log(`getter: key = ${key}`);
+			// console.log(`getter: key = ${key}`);
 			return val;
 		},
 		set(newVal) {
-			console.log(`setter: key = ${key}`);
+			// console.log(`setter: key = ${key}`);
 			if (newVal === val) return;
 			val = newVal;
 			// 对新值进行响应式处理

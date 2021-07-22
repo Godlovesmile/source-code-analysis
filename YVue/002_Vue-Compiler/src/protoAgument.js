@@ -20,7 +20,6 @@ methodsToPatch.forEach((method) => {
 		const result = arrayProto[method].apply(this, args);
 
 		// 2. notify change; 预留数组的检测变化, 响应式
-		console.log('array notify change', this);
 		let inserted;
         const ob = this.__ob__;
 

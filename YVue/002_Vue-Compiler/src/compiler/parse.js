@@ -4,11 +4,12 @@
 import { isUnaryTag } from '../utils.js';
 
 export default function parse(template) {
-	const stack = [];
+	let stack = [];
 	let root = null;
 	let html = template;
 
 	while (html.trim()) {
+		console.log(888);
 		// 过滤注释标签
 		if (html.indexOf('<!--') === 0) {
 			// 说明开始位置是注释标签, 忽略掉
@@ -31,7 +32,8 @@ export default function parse(template) {
 			// eg: xxx</div>
 			const nextStartIndex = html.indexOf('<');
 			// 先处理文本部分, 通过 statck 判断文本部分是不是为处理标签中的内容
-			if (statck.length) {
+			if (stack.length) {
+				console.log(stack.length);
 				processChars(html.slice(0, nextStartIndex));
 			}
 			// 处理完文本, 删除文本部分, 剩下结束标签 </div>
@@ -116,12 +118,18 @@ export default function parse(template) {
 		if (propertyArr.includes('v-model')) {
 			// 处理 v-model 指令
 			processVModel(curEle);
-		} else if (propertyArr.find((i) => i.math(/^v-bind:(.*)/))) {
+		} else if (propertyArr.find((i) => i.match(/^v-bind:(.*)/))) {
 			// 处理 v-bind 指令
 			processVBind(curEle, RegExp.$1, rawAttr[`v-bind:${RegExp.$1}`]);
-		} else if (propertyArr.find((i) => i.math(/^v-on:(.*)/))) {
+		} else if (propertyArr.find((i) => i.match(/^v-on:(.*)/))) {
 			// 处理 v-on 指令
 			processVOn(curEle, RegExp.$1, rawAttr[`v-on:${RegExp.$1}`]);
+		}
+
+		// 节点处理完后让其和父节点产生关系
+		if (stackLen) {
+			stack[stackLen - 1].children.push(curEle);
+			curEle.parent = stack[stackLen - 1];
 		}
 	}
 
@@ -129,6 +137,7 @@ export default function parse(template) {
 	 * 处理文本
 	 */
 	function processChars(text) {
+		console.log(text);
 		if (!text.trim()) return;
 
 		// 构造文本节点的 AST 对象
@@ -141,71 +150,74 @@ export default function parse(template) {
 			textAst.expression = RegExp.$1.trim();
 		}
 		// 将 ast 放到栈顶元素中 children 中
+		console.log(stack);
 		stack[stack.length - 1].children.push(textAst);
 	}
-}
 
-/*
- * 解析属性数组, 得到一个 map 对象
- */
-function parseAttrs(attrs) {
-	const attrMap = {};
-	for (let i = 0; i < attrs.length; i++) {
-		const attr = attrs[i];
-		const [attrKey, attrValue] = attr.split('=');
+	/*
+	 * 解析属性数组, 得到一个 map 对象
+	 */
+	function parseAttrs(attrs) {
+		// console.log('=== attrs ===', attrs);
+		const attrMap = {};
+		for (let i = 0; i < attrs.length; i++) {
+			const attr = attrs[i];
+			const [attrKey, attrValue] = attr.split('=');
 
-		attrMap[attrKey] = attrValue.replace(/\s*/g, '');
-	}
-	return attrMap;
-}
-
-/*
- * 生成 AST 对象
- */
-function generateAST(tagName, attrMap) {
-	return {
-		// 元素节点
-		type: 1,
-		tag: tagName,
-		// 原始属性标签
-		rawAttr: attrMap,
-		children: [],
-	};
-}
-
-/*
- * 处理 v-model 指令, 将结果直接放在 curEle 对象上
- */
-function processVModel(curEle) {
-	const { tag, rawAttr, attr } = curEle;
-	const { type, 'v-moodel': vModelVal } = rawAttr;
-
-	if (tag === 'input') {
-		if (/text/.test(type)) {
-			// <input type="text" v-model="">
-			attr.vModel = { tag, type: 'text', value: vModelVal };
-		} else if (/checkbox/.test(type)) {
-			attr.vModel = { tag, type: 'checkbox', value: vModelVal };
+			attrMap[attrKey] = attrValue.replace(/\s*/g, '');
 		}
-	} else if (tag === 'textarea') {
-		// <textarea v-model="test">
-		attr.vModel = { tag, value: vModelVal };
-	} else if (tag === 'select') {
-		// <select v-model="val"></select>
-		attr.vModel = { tag, value: vModelVal };
+		return attrMap;
 	}
-}
 
-/*
- * 处理 v-bind 指令
- */
-function processVBind(curEle, bindKey, bindVal) {
-	curEle.attr.vBind = { [bindKey]: bindVal };
-}
+	/*
+	 * 生成 AST 对象
+	 */
+	function generateAST(tagName, attrMap) {
+		return {
+			// 元素节点
+			type: 1,
+			tag: tagName,
+			// 原始属性标签
+			rawAttr: attrMap,
+			children: [],
+		};
+	}
 
-/*
- * 处理 v-on 指令
- */
-function processVOn(curEle, vOnKey, vOnVal) {
-	curEle.attr.vOn = { [vOnKey]: vOnVal };
+	/*
+	 * 处理 v-model 指令, 将结果直接放在 curEle 对象上
+	 */
+	function processVModel(curEle) {
+		const { tag, rawAttr, attr } = curEle;
+		const { type, 'v-moodel': vModelVal } = rawAttr;
+
+		if (tag === 'input') {
+			if (/text/.test(type)) {
+				// <input type="text" v-model="">
+				attr.vModel = { tag, type: 'text', value: vModelVal };
+			} else if (/checkbox/.test(type)) {
+				attr.vModel = { tag, type: 'checkbox', value: vModelVal };
+			}
+		} else if (tag === 'textarea') {
+			// <textarea v-model="test">
+			attr.vModel = { tag, value: vModelVal };
+		} else if (tag === 'select') {
+			// <select v-model="val"></select>
+			attr.vModel = { tag, value: vModelVal };
+		}
+	}
+
+	/*
+	 * 处理 v-bind 指令
+	 * <span v-bind:title="title"></span>
+	 */
+	function processVBind(curEle, bindKey, bindVal) {
+		curEle.attr.vBind = { [bindKey]: bindVal };
+	}
+
+	/*
+	 * 处理 v-on 指令
+	 */
+	function processVOn(curEle, vOnKey, vOnVal) {
+		curEle.attr.vOn = { [vOnKey]: vOnVal };
+	}
 }
