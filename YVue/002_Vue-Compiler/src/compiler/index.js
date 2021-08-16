@@ -22,5 +22,7 @@ export default function mount(vm) {
 		const render = compileToFunction(template);
 		// 将渲染函数挂载到 $options 上
 		vm.$options.render = render;
+		console.log(vm.$options.render);
 	}
+	mountComponent(vm);
 }

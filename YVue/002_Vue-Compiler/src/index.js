@@ -1,5 +1,6 @@
 import initData from './initData.js';
-import mount from './compiler/index.js'
+import mount from './compiler/index.js';
+import renderHelper from './compiler/renderHelper.js';
 export default function Vue(options) {
 	this._init(options);
 }
@@ -13,6 +14,7 @@ Vue.prototype._init = function (options) {
         3. 给 data 对象上的各个属性设置响应能力 
     */
 	initData(this);
+	renderHelper(this);
 
 	if (this.$options.el) {
 		this.$mount();
@@ -20,5 +22,5 @@ Vue.prototype._init = function (options) {
 };
 
 Vue.prototype.$mount = function () {
-    mount(this);
+	mount(this);
 };

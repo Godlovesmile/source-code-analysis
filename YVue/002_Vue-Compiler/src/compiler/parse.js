@@ -9,7 +9,6 @@ export default function parse(template) {
 	let html = template;
 
 	while (html.trim()) {
-		console.log(888);
 		// 过滤注释标签
 		if (html.indexOf('<!--') === 0) {
 			// 说明开始位置是注释标签, 忽略掉
@@ -33,7 +32,6 @@ export default function parse(template) {
 			const nextStartIndex = html.indexOf('<');
 			// 先处理文本部分, 通过 statck 判断文本部分是不是为处理标签中的内容
 			if (stack.length) {
-				console.log(stack.length);
 				processChars(html.slice(0, nextStartIndex));
 			}
 			// 处理完文本, 删除文本部分, 剩下结束标签 </div>
@@ -137,7 +135,6 @@ export default function parse(template) {
 	 * 处理文本
 	 */
 	function processChars(text) {
-		console.log(text);
 		if (!text.trim()) return;
 
 		// 构造文本节点的 AST 对象
@@ -150,7 +147,6 @@ export default function parse(template) {
 			textAst.expression = RegExp.$1.trim();
 		}
 		// 将 ast 放到栈顶元素中 children 中
-		console.log(stack);
 		stack[stack.length - 1].children.push(textAst);
 	}
 
@@ -158,13 +154,13 @@ export default function parse(template) {
 	 * 解析属性数组, 得到一个 map 对象
 	 */
 	function parseAttrs(attrs) {
-		// console.log('=== attrs ===', attrs);
 		const attrMap = {};
 		for (let i = 0; i < attrs.length; i++) {
 			const attr = attrs[i];
 			const [attrKey, attrValue] = attr.split('=');
 
-			attrMap[attrKey] = attrValue.replace(/\s*/g, '');
+			// attrMap[attrKey] = attrValue.replace(/\s*/g, '');
+			attrMap[attrKey] = attrValue.replace(/\"/g, '');
 		}
 		return attrMap;
 	}

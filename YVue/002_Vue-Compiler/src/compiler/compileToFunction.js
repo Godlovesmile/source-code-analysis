@@ -6,10 +6,9 @@ import parse from './parse.js';
 import generate from './generate.js';
 
 export default function compileToFunction(template) {
-	console.log('=== template ===', template);
 	// 解析模板, 生成 AST
 	const ast = parse(template);
-	console.log('=== ast ===', ast);
+	console.log('=== ast ===');
 	console.log(ast);
 	// 将 ast 生成渲染函数
 	const render = generate(ast);
