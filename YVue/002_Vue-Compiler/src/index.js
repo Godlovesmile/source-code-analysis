@@ -1,6 +1,7 @@
 import initData from './initData.js';
 import mount from './compiler/index.js';
 import renderHelper from './compiler/renderHelper.js';
+import patch from './compiler/patch.js';
 export default function Vue(options) {
 	this._init(options);
 }
@@ -15,6 +16,8 @@ Vue.prototype._init = function (options) {
     */
 	initData(this);
 	renderHelper(this);
+	// 将 patch 方法挂在到 Vue 实例上
+	this.__patch__ = patch;
 
 	if (this.$options.el) {
 		this.$mount();

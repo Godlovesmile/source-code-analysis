@@ -23,7 +23,7 @@
             count-click
         </div>
         <span>count: {{ count }}</span>
-        <img v-bind:src="bindimgsrc">
+        <img v-bind:src="bindimgsrc" />
         <input v-model="vmodelVal" />
         <div>inputVal: {{ vmodelVal }}</div>
         <div>
@@ -45,6 +45,8 @@
             </select>
             <div>selectVal: {{ selectVal }}</div>
         </div>
+        <testcomp></testcomp>
+        <slotcomp></slotcomp>
     </div>
 
     <script type="module">
@@ -71,7 +73,20 @@
                     // this.checkboxVal = this.checkboxVal ? '' : 'checked';
                     this.checkboxVal = '';
                 }
-            }
+            },
+            components: {
+                'testcomp': {
+                    template: `<div><p>{{ compCount }}</p></div>`,
+                    data() {
+                        return {
+                            compCount: '=== hello ==='
+                        }
+                    }
+                },
+                'slotcomp': {
+                    template: '<div><div><slot name="slot1"><span>插槽默认内容</span></slot></div></div>'
+                }
+            },
         });
 
         // setTimeout(() => {

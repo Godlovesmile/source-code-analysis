@@ -1,7 +1,7 @@
 import VNode from './vnode.js';
 
 // 在 Vue 实例上安装运行时的渲染函数, 比如 _c, _v 
-export default renderHelper(target) {
+export default function renderHelper(target) {
     target._c = createElement;
     target._v = createTextNode;
 }

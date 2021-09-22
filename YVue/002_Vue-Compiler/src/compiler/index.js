@@ -2,6 +2,7 @@
  * 编译器
  */
 import compileToFunction from './compileToFunction.js';
+import mountComponent from './mountComponent.js';
 
 export default function mount(vm) {
 	if (!vm.$options.render) {
@@ -24,5 +25,6 @@ export default function mount(vm) {
 		vm.$options.render = render;
 		console.log(vm.$options.render);
 	}
+
 	mountComponent(vm);
 }

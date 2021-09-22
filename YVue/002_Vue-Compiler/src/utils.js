@@ -28,6 +28,26 @@ export function def(obj, key, val, enumerable) {
  * 是否闭合标签
  */
 export function isUnaryTag(tagName) {
-	const unaryTag = ['input'];
+	const unaryTag = ['input', 'img'];
 	return unaryTag.includes(tagName);
+}
+
+/*
+ * 是否平台保留节点
+ */
+export function isReserveTag(tagName) {
+	const reserveTag = [
+		'div',
+		'h3',
+		'span',
+		'input',
+		'select',
+		'option',
+		'p',
+		'button',
+		'template',
+		'img',
+		'label'
+	];
+	return reserveTag.includes(tagName);
 }

@@ -124,10 +124,34 @@ export default function parse(template) {
 			processVOn(curEle, RegExp.$1, rawAttr[`v-on:${RegExp.$1}`]);
 		}
 
+		// 处理插槽内容
+		processSlotContent(curEle);
+
 		// 节点处理完后让其和父节点产生关系
 		if (stackLen) {
 			stack[stackLen - 1].children.push(curEle);
 			curEle.parent = stack[stackLen - 1];
+
+			// 如果节点存在 slotName, 则说明该节点是组件传递给插槽的内容
+			if (curEle.slotName) {
+				const { parent, slotName, scopeSlot, children } = curEle;
+				// 这里关于 children 操作, 只是单纯为避开 JSON.stringify 循环引用问题, 官方不存在此问题, 官方是通过字符串拼接
+				const slotInfo = {
+					slotName,
+					scopeSlot,
+					children: children.map((i) => {
+						delete i.parent;
+						return i;
+					}),
+				};
+				if (parent.rawAttr.scopedSlots) {
+					parent.rawAttr.scopedSlots[curEle.slotName] = slotInfo;
+				} else {
+					parent.rawAttr.scopedSlots = {
+						[curEle.slotName]: slotInfo,
+					};
+				}
+			}
 		}
 	}
 
@@ -215,5 +239,23 @@ export default function parse(template) {
 	 */
 	function processVOn(curEle, vOnKey, vOnVal) {
 		curEle.attr.vOn = { [vOnKey]: vOnVal };
+	}
+
+	/*
+	 * 处理插槽
+	 */
+	function processSlotContent(el) {
+		if (el.tag == 'template') {
+			// 属性 map 对象
+			const attrMap = el.rawAttr;
+			for (let key in attrMap) {
+				if (key.match(/v-slot:(.*)/)) {
+					// 获取指令后的插槽名称和值
+					const slotName = (el.slotName = RegExp.$1);
+					el.scopeSlot = attrMap[`v-slot:${slotName}`];
+					return;
+				}
+			}
+		}
 	}
 }
