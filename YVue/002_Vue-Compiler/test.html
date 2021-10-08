@@ -47,6 +47,11 @@
         </div>
         <testcomp></testcomp>
         <slotcomp></slotcomp>
+        <slotcomp>
+            <template v-slot:slot2="xx">
+                <div>作用域插槽，通过插槽从父组件给子组件传递内容</div>
+            </template>
+        </slotcomp>
     </div>
 
     <script type="module">
@@ -56,6 +61,7 @@
             el: '#app',
             data() {
                 return {
+                    xx: 'test',
                     testStr: '测试一',
                     count: 1,
                     bindimgsrc: 'https://wxmini-resource.hortorgames.com/background-image/Lark20210707-131542-1625635395.png',
@@ -84,7 +90,7 @@
                     }
                 },
                 'slotcomp': {
-                    template: '<div><div><slot name="slot1"><span>插槽默认内容</span></slot></div></div>'
+                    template: '<div><slot name="slot2" v-bind:test="xx"><span>插槽默认内容</span></slot></div>'
                 }
             },
         });

@@ -19,6 +19,8 @@ function genElement(ast) {
 
 	if (tag === 'slot') {
 		// 生成插槽的处理函数
+		console.log('=== slot attrs ===');
+		console.log(attrs);
 		return `_t(${JSON.stringify(attrs)}, [${children}])`;
 	}
 
