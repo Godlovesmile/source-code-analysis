@@ -159,6 +159,7 @@ export default function parse(template) {
 	 * 处理文本
 	 */
 	function processChars(text) {
+		console.log('=== text ===', text);
 		if (!text.trim()) return;
 
 		// 构造文本节点的 AST 对象
@@ -170,6 +171,7 @@ export default function parse(template) {
 			// 说明是表达式, eg: {{ test }}
 			textAst.expression = RegExp.$1.trim();
 		}
+		console.log(textAst);
 		// 将 ast 放到栈顶元素中 children 中
 		stack[stack.length - 1].children.push(textAst);
 	}
@@ -207,8 +209,9 @@ export default function parse(template) {
 	 * 处理 v-model 指令, 将结果直接放在 curEle 对象上
 	 */
 	function processVModel(curEle) {
+		console.log(curEle);
 		const { tag, rawAttr, attr } = curEle;
-		const { type, 'v-moodel': vModelVal } = rawAttr;
+		const { type, 'v-model': vModelVal } = rawAttr;
 
 		if (tag === 'input') {
 			if (/text/.test(type)) {

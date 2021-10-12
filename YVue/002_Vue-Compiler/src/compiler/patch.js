@@ -24,6 +24,7 @@ export default function patch(oldVnode, vnode) {
 		} else {
 			// 后续更新
 			console.log('=== update ===');
+			patchVnode(oldVnode, vnode);
 		}
 	}
 	return vnode.elm;
@@ -105,15 +106,16 @@ function createTextNode(textVnode) {
 		// 纯文本节点
 		textNode = document.createTextNode(text.text);
 	}
-
+	console.log(textNode);
 	return textNode;
 }
 
 // 给节点设置属性
 function setAttribute(attr, vnode) {
 	for (const name in attr) {
-		if (name === 'vModel') {
-			const { tag, value } = attr.vModel;
+		console.log(name);
+		if (name === 'vModel' || name == 'v-model') {
+			const { tag, value } = attr['vModel'] || attr['v-model'];
 			setVModel(tag, value, vnode);
 		} else if (name === 'vOn') {
 			setVOn(vnode);
@@ -179,4 +181,110 @@ function setVBind(vnode) {
 		elm.setAttribute(attrName, vm[vBind[attrName]]);
 		elm.removeAttribute(`v-bind:${attrName}`);
 	}
+}
+
+// 对比新老节点, 找出其中的不同, 然后更新老节点
+function patchVnode(oldVnode, vnode) {
+	// 新老节点相同, 直接结束
+	if (oldVnode === vnode) return;
+
+	// 将老 vnode 上的真实节点同步到新的 vnode 上, 否则, 后续更新的时候会出现 vnode.elm 为空现象
+	vnode.elm = oldVnode.elm;
+
+	// 到此, 说明新老节点不一样, 则获取它们的孩子节点, 比较孩子节点
+	const ch = vnode.children;
+	const oldCh = oldVnode.children;
+
+	if (!vnode.text) {
+		// 新节点不存在文本节点
+		if (ch && oldCh) {
+			// diff
+			updateChildren(ch, oldCh);
+		} else if (ch) {
+			// 新节点有孩子
+			// 增加孩子节点
+		} else {
+			// 新节点没有孩子, 老节点有孩子
+			// 删除这些孩子节点
+		}
+	} else {
+		// 新节点存在文本节点
+		if (vnode.text.expression) {
+			// 说明存在表达式
+			// 获取表达式的新值
+			const value = JSON.stringify(vnode.context[vnode.text.expression]);
+			try {
+				const oldValue = oldVnode.elm.textContent;
+				if (value !== oldValue) {
+					// 新老值不一样, 则更新
+					oldVnode.elm.textContent = value.replace(/\"/g, '');
+				}
+			} catch (error) {
+				// 防止更新时遇到插槽, 导致报错
+				// 先不处理插槽数据更新
+			}
+		}
+	}
+}
+
+// diff, 比较孩子节点, 找出不同点, 然后将不同点更新到老节点
+function updateChildren(ch, oldCh) {
+	// 四个游标进行对比
+	let newStartIdx = 0;
+	let newEndIdx = ch.length - 1;
+	let oldStartIdx = 0;
+	let oldEndIdx = oldCh.length - 1;
+
+	// 循环遍历找出不同点
+	while (newStartIdx <= newEndIdx && oldStartIdx <= oldEndIdx) {
+		// 新开始节点
+		const newStartNode = ch[newStartIdx];
+		// 新结束节点
+		const newEndNode = ch[newEndIdx];
+		// 旧开始节点
+		const oldStartNode = oldCh[oldStartIdx];
+		// 旧结束节点
+		const oldEndNode = oldCh[oldEndIdx];
+
+		if (sameNode(newStartNode, oldStartNode)) {
+			// 新开始节点与旧开始节点是同一个节点
+			// 对比两个节点, 找出不同然后更新
+			patchVnode(oldStartNode, newStartNode);
+			// 更新游标
+			newStartIdx++;
+			oldStartIdx++;
+		} else if (sameNode(newStartNode, oldEndNode)) {
+			// 新开始节点和老开始是同一个节点
+			patchVnode(oldEndNode, newStartNode);
+			// 将老结束移动到新开始位置
+			oldEndNode.elm.parentNode.insertBefore(
+				oldEndNode.elm,
+				oldCh[newStartNode].elm
+			);
+			// 移动游标
+			newStartIdx++;
+			oldEndIdx--;
+		} else if (sameNode(newEndIdx, oldStartIdx)) {
+			// 新结束节点和旧开始节点相同
+			patchVnode(oldStartNode, newEndNode);
+			// 将旧开始移动到新结束位置
+			oldStartNode.elm.parentNode.insertBefore(
+				oldStartNode.elm,
+				oldCh[newEndIdx].elm
+			);
+			oldStartIdx++;
+			newEndIdx--;
+		} else if (sameNode(newEndNode, oldEndNode)) {
+			patchVnode(oldEndNode, newEndNode);
+			newEndIdx--;
+			oldEndIdx--;
+		} else {
+			// 上面几种假设都没命中, 则老老实实遍历, 找到那个相同的元素
+		}
+	}
+}
+
+// 判断节点是否相同
+function sameNode(n1, n2) {
+	return n1.key == n2.key && n1.tag == n2.tag;
 }

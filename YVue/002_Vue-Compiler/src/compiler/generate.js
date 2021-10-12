@@ -5,8 +5,6 @@
 export default function generate(ast) {
 	// 函数函数字符串形式
 	const renderStr = genElement(ast);
-	console.log('=== renderStr ===');
-	console.log(renderStr);
 	return new Function(`with(this) { return ${renderStr} }`);
 }
 
@@ -19,8 +17,6 @@ function genElement(ast) {
 
 	if (tag === 'slot') {
 		// 生成插槽的处理函数
-		console.log('=== slot attrs ===');
-		console.log(attrs);
 		return `_t(${JSON.stringify(attrs)}, [${children}])`;
 	}
 

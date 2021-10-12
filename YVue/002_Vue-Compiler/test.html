@@ -22,11 +22,11 @@
         <div v-on:click="handleClick" class="btn">
             count-click
         </div>
-        <span>count: {{ count }}</span>
-        <img v-bind:src="bindimgsrc" />
-        <input v-model="vmodelVal" />
+        <div>count: {{ count }}</div>
+        <!-- <img v-bind:src="bindimgsrc" /> -->
+        <input v-model="vmodelVal" type="text" />
         <div>inputVal: {{ vmodelVal }}</div>
-        <div>
+        <!-- <div>
             <p>
                 <label for="apple">apple</label>
                 <input v-model="checkboxVal" type="checkbox" name="apple" id="apple" />
@@ -51,7 +51,7 @@
             <template v-slot:slot2="xx">
                 <div>作用域插槽，通过插槽从父组件给子组件传递内容</div>
             </template>
-        </slotcomp>
+        </slotcomp> -->
     </div>
 
     <script type="module">

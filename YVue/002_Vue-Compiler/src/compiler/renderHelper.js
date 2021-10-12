@@ -24,13 +24,9 @@ function renderSlot(attrs, children) {
 	let vnode = null;
 
 	if (parentAttr.scopedSlots) {
-		console.log('===');
-		console.log(attrs);
-        console.log(parentAttr.scopedSlots);
 		// 获取插槽信息
 		const slotName = attrs.name;
 		const slotInfo = parentAttr.scopedSlots[slotName];
-		console.log('slotInfo', slotInfo);
 
 		this[slotInfo.scopeSlot] = this[Object.keys(attrs.vBind)[0]];
 		vnode = genVNode(slotInfo.children, this);
