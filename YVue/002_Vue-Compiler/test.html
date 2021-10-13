@@ -23,6 +23,7 @@
             count-click
         </div>
         <div>count: {{ count }}</div>
+        <div>{{ updateCount }}</div>
         <!-- <img v-bind:src="bindimgsrc" /> -->
         <input v-model="vmodelVal" type="text" />
         <div>inputVal: {{ vmodelVal }}</div>
@@ -69,6 +70,11 @@
                     checkboxVal: 'checked',
                     selectVal: 'dog'
                     // testArr: [1, 2, 4, { test: 'arr item test' }]
+                }
+            },
+            computed: {
+                updateCount: function () {
+                    return this.count + 1;
                 }
             },
             methods: {

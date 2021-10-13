@@ -1,6 +1,10 @@
+// 存储所有的 Deep.target
 export default function Dep() {
 	this.watchers = [];
 }
+
+// 造成 computed 计算属性之后渲染的响应式数据无法完成依赖收集
+const targetStatck = [];
 
 // 实例化 Watcher 时进行赋值; 收集完成之后又赋值为 null
 Dep.target = null;
@@ -19,3 +23,15 @@ Dep.prototype.notify = function () {
 		watcher.update();
 	}
 };
+
+//
+export function pushTarget(target) {
+	// 备份传递进来的 Watcher
+	targetStatck.push(target);
+	Dep.target = target;
+}
+
+export function popTarget(target) {
+	targetStatck.pop();
+	Dep.target = targetStatck[targetStatck.length - 1];
+}
