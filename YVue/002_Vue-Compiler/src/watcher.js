@@ -1,5 +1,8 @@
 import Dep, { popTarget, pushTarget } from './dep.js';
 
+// 用来标记 watcher
+let uid = 0;
+
 export default function Watcher(cb, options = {}, vm = null) {
 	// 回调函数, 负责更新 Dom 回调函数
 	this._cb = cb;
@@ -8,6 +11,8 @@ export default function Watcher(cb, options = {}, vm = null) {
 	// 执行 cb 函数, cb 函数中会发生 vm.xx 的属性读取, 进行依赖收集
 	// cb();
 	// Dep.target = null;
+	// 标识 watcher
+	this.uid = uid++;
 
 	// 回调函数执行后的值
 	this.value = null;
@@ -19,11 +24,18 @@ export default function Watcher(cb, options = {}, vm = null) {
 	!options.lazy && this.get();
 }
 
+// 响应式数据更新时, dep 通知 watcher 执行 update 方法
 Watcher.prototype.update = function () {
-	Promise.resolve().then(() => {
-		this._cb();
-	});
-	this.dirty = true;
+	// Promise.resolve().then(() => {
+	// 	this._cb();
+	// });
+	// this.dirty = true;
+	if (this.options.lazy) {
+		// 懒执行
+		this.dirty = true;
+	} else {
+		// 将 watcher 放入异步 watcher 队列
+	}
 };
 
 Watcher.prototype.get = function () {
