@@ -5,8 +5,10 @@
 	"main": "./lib/yelement-ui.common.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"dist": "webpack --config build/webpack.common.js",
-		"build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk"
+		"dist": "webpack --config build/webpack.common.js && webpack --config build/webpack.component.js",
+		"build:theme": "node build/bin/gen-cssfile && gulp build --gulpfile packages/theme-chalk/gulpfile.js && cp-cli packages/theme-chalk/lib lib/theme-chalk",
+		"build:file": "node build/bin/build-entry.js",
+		"dev": "cross-env NODE_ENV=development webpack-dev-server --config build/webpack.demo.js"
 	},
 	"author": "",
 	"license": "ISC",
@@ -22,6 +24,27 @@
 		"gulp-sass": "^4.0.2",
 		"cp-cli": "^1.0.2",
 		"uppercamelcase": "^1.1.0",
-		"file-save": "^0.2.0"
+		"file-save": "^0.2.0",
+		"json-templater": "^1.0.4",
+		"progress-bar-webpack-plugin": "^1.11.0",
+		"webpack-node-externals": "^1.7.2",
+		"babel-cli": "^6.26.0",
+		"babel-core": "^6.26.3",
+		"babel-loader": "^7.1.5",
+		"babel-plugin-add-module-exports": "^0.2.1",
+		"babel-plugin-istanbul": "^4.1.1",
+		"babel-plugin-module-resolver": "^2.2.0",
+		"babel-plugin-syntax-jsx": "^6.18.0",
+		"babel-plugin-transform-vue-jsx": "^3.7.0",
+		"babel-preset-env": "^1.7.0",
+		"babel-preset-stage-2": "^6.24.1",
+		"babel-regenerator-runtime": "^6.5.0",
+		"style-loader": "^0.23.1",
+		"sass-loader": "^7.1.0",
+		"node-sass": "^4.11.0",
+		"url-loader": "^1.0.1",
+		"cross-env": "^3.1.3",
+		"webpack-dev-server": "^3.1.11",
+		"html-webpack-plugin": "^3.2.0"
 	}
 }

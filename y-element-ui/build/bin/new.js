@@ -37,10 +37,12 @@ const PackagePath = path.resolve(__dirname, '../../packages', componentname);
 const Files = [
 	{
 		filename: 'index.js',
-		content: `import ${ComponentName} from './src/main'; 
+		content: `import ${ComponentName} from './src/main.vue'; 
+
 ${ComponentName}.install = function(Vue) {
 	Vue.component(${ComponentName}.name), ${ComponentName}
 };
+
 export default ${ComponentName}`,
 	},
 	{
