@@ -6,7 +6,8 @@
   "scripts": {
     "build": "npm run types & rollup -c",
     "types": "tsc --emitDeclarationOnly",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc src/index.ts"
   },
   "author": "",
   "license": "ISC",
