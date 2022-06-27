@@ -1,4 +1,6 @@
 import { Queue } from './queue';
+import { Scheduler } from './scheduler';
+import { Subscriber } from './subscriber';
 import { isJsonObject } from './utils';
 
 type PromiseResult<R> = R extends () => infer P
@@ -35,5 +37,12 @@ function createQueue<T extends unknown[]>(
   tasks.forEach(task => {
     taskQueue.enqueue(task);
   })
+
+  const subscriber = new Subscriber();
+  const scheduler = new Scheduler<QueueResult<T>>(taskQueue, { max, interval }, subscriber);
+  const queue = {
+    subscribe: subscriber.subscribe.bind(subscriber)
+  }
+
   return null;
 }
