@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>canvas 扇形倒计时, js 控制</title>
+  <style>
+    canvas {
+      background-color: #ED2E79;
+    }
+
+    .box {
+      width: 30px;
+      height: 30px;
+      border-radius: 100%;
+      overflow: hidden;
+      transform: rotate(-90deg);
+    }
+
+    .countdown-btn {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <canvas width="30" height="30"></canvas>
+  </div>
+  <button onclick="handleClick()" class="countdown-btn">倒计时</button>
+  <script>
+    let total_times = 60                         // 游戏总时间
+    let cntd = total_times
+    let endAngle = -2.5 * Math.PI
+
+    let i = 0
+    let myCanvas = document.querySelector('canvas');
+    let ctx = myCanvas.getContext('2d');
+
+    /*在中心位置画一个半径150px的圆弧右上角 扇形  边  填充 */
+    let w = ctx.canvas.width;
+    let h = ctx.canvas.height;
+
+    /*把起点放到圆心位置*/
+    ctx.moveTo(w / 2, h / 2);
+
+    ctx.arc(w/2, h/2, 30, 0, 0);
+    ctx.fillStyle = '#551c42';
+
+    /*闭合路径*/
+    //ctx.closePath();
+
+    ctx.fill();
+
+    function handleClick() {
+      endAngle += 2 * Math.PI / total_times
+      cntd--
+
+      let x, y, r1 = 21, r = 30
+
+      x = (r - 9) * Math.cos(endAngle) + w / 2 // 通过三角函数计算x y 坐标
+      y = (r - 9) * Math.sin(endAngle) + w / 2
+
+      i++
+      const l = (Math.PI * 2) * (i / 60)
+      ctx.moveTo(w / 2, h / 2)
+      ctx.arc(w / 2, w / 2, 30, 0, l)
+      ctx.fill()
+    }
+  </script>
+</body>
+
+</html>
