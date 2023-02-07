@@ -1,4 +1,7 @@
+// reactivity/src/reactive.ts
+
 import { isObject } from '@mini-vue3/shared'
+import { track } from './effect'
 
 const enum ReactiveFlags {
   IS_REACTIVE = '__v_isReactive',
@@ -32,7 +35,17 @@ export function reactive(target: object) {
         return true
       }
       console.log(`=== ${key} 属性被访问, 依赖收集 ===`)
-      return Reflect.get(target, key)
+
+      // 依赖收集, 让 target, key 和当前的 _effect 关联起来
+      track(target, key)
+
+      const res = Reflect.get(target, key)
+
+      if (isObject(res)) {
+        return reactive(res)
+      }
+
+      return res
     },
     // 监听设置属性操作
     set(target, key, value, receiver) {
