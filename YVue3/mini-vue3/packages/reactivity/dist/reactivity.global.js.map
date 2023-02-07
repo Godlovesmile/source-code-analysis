@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../shared/src/index.ts", "../src/index.ts"],
+  "sourcesContent": ["// src/index.ts\n\n/**\n * \u5224\u65AD\u5BF9\u8C61\n */\nexport const isObject = (value: unknown) => {\n  return typeof value === 'object' && value !== null\n}\n\n/**\n * \u5224\u65AD\u5B57\u7B26\u4E32\n */\nexport const isString = (value: unknown) => {\n  return typeof value === 'string'\n}\n\n/**\n * \u5224\u65AD\u6570\u5B57\n */\nexport const isNumber = (value: unknown) => {\n  return typeof value === 'number'\n}\n\n/**\n * \u5224\u65AD\u6570\u7EC4\n */\nexport const isArray = Array.isArray", "// src/index.ts\nimport { isObject } from '@mini-vue3/shared'\n\nconst obj = { name: 'vue3' }\n\nconsole.log(isObject(obj))"],
+  "mappings": ";;;AAKO,MAAM,WAAW,CAAC,UAAmB;AAC1C,WAAO,OAAO,UAAU,YAAY,UAAU;AAAA,EAChD;AAmBO,MAAM,UAAU,MAAM;;;ACvB7B,MAAM,MAAM,EAAE,MAAM,OAAO;AAE3B,UAAQ,IAAI,SAAS,GAAG,CAAC;",
+  "names": []
+}
