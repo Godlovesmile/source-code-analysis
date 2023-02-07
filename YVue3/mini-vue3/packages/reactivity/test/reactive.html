@@ -1,0 +1,13 @@
+<script src="../dist/reactivity.global.js"></script>
+<script>
+  const { reactive } = VueReactivity
+  const obj = { name: 'test', age: 18, grade: { math: 88 } }
+  const state = reactive(obj)
+
+  console.log(state.name)
+  console.log(state.grade.math)
+  console.log(state.__v_isReactive)
+
+  state.age = 99
+  state.grade.math = 77
+</script>
