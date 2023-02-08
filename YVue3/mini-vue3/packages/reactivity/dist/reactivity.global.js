@@ -21,6 +21,7 @@ var VueReactivity = (() => {
   // packages/reactivity/src/index.ts
   var src_exports = {};
   __export(src_exports, {
+    effect: () => effect,
     reactive: () => reactive
   });
 
@@ -29,6 +30,50 @@ var VueReactivity = (() => {
     return typeof value === "object" && value !== null;
   };
   var isArray = Array.isArray;
+
+  // packages/reactivity/src/effect.ts
+  var activeEffect;
+  function effect(fn) {
+    const _effect = new ReactiveEffect(fn);
+    _effect.run();
+  }
+  var ReactiveEffect = class {
+    constructor(fn) {
+      this.fn = fn;
+    }
+    run() {
+      activeEffect = this;
+      this.fn();
+    }
+  };
+  var targetMap = /* @__PURE__ */ new WeakMap();
+  function track(target, key) {
+    if (!activeEffect)
+      return;
+    let depsMap = targetMap.get(target);
+    if (!depsMap) {
+      targetMap.set(target, depsMap = /* @__PURE__ */ new Map());
+    }
+    let deps = depsMap.get(key);
+    if (!deps) {
+      depsMap.set(key, deps = /* @__PURE__ */ new Set());
+    }
+    let shouldTrack = !deps.has(activeEffect);
+    if (shouldTrack) {
+      deps.add(activeEffect);
+    }
+  }
+  function trigger(target, key) {
+    let depsMap = targetMap.get(target);
+    if (!depsMap)
+      return;
+    let effects = depsMap.get(key);
+    if (effects) {
+      effects.forEach((effect2) => {
+        effect2.run();
+      });
+    }
+  }
 
   // packages/reactivity/src/reactive.ts
   var reactiveMap = /* @__PURE__ */ new WeakMap();
@@ -49,13 +94,19 @@ var VueReactivity = (() => {
           return true;
         }
         console.log(`=== ${key} \u5C5E\u6027\u88AB\u8BBF\u95EE, \u4F9D\u8D56\u6536\u96C6 ===`);
-        return Reflect.get(target2, key);
+        track(target2, key);
+        const res = Reflect.get(target2, key);
+        if (isObject(res)) {
+          return reactive(res);
+        }
+        return res;
       },
       // 监听设置属性操作
       set(target2, key, value, receiver) {
         console.log(`${key}\u5C5E\u6027\u53D8\u5316\u4E86, \u6D3E\u53D1\u66F4\u65B0`);
         if (target2[key] !== value) {
           const result = Reflect.set(target2, key, value, receiver);
+          trigger(target2, key);
           return result;
         }
       }

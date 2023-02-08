@@ -1,7 +1,7 @@
 // reactivity/src/reactive.ts
 
 import { isObject } from '@mini-vue3/shared'
-import { track } from './effect'
+import { track, trigger } from './effect'
 
 const enum ReactiveFlags {
   IS_REACTIVE = '__v_isReactive',
@@ -52,6 +52,10 @@ export function reactive(target: object) {
       console.log(`${key}属性变化了, 派发更新`)
       if (target[key] !== value) {
         const result = Reflect.set(target, key, value, receiver)
+
+        // 派发更新, 通知 target 的属性, 让依赖它的 _effect 再次执行
+        trigger(target, key)
+        
         return result
       }
     },
