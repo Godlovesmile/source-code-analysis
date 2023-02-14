@@ -3,7 +3,7 @@
 import { isObject } from '@mini-vue3/shared'
 import { track, trigger } from './effect'
 
-const enum ReactiveFlags {
+export const enum ReactiveFlags {
   IS_REACTIVE = '__v_isReactive',
 }
 
@@ -34,7 +34,6 @@ export function reactive(target: object) {
         // 返回设置 '__v_isReactive' 的值
         return true
       }
-      console.log(`=== ${key} 属性被访问, 依赖收集 ===`)
 
       // 依赖收集, 让 target, key 和当前的 _effect 关联起来
       track(target, key)
