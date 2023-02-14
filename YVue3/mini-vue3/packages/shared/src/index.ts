@@ -25,3 +25,5 @@ export const isNumber = (value: unknown) => {
  * 判断数组
  */
 export const isArray = Array.isArray
+
+export const extend = Object.assign

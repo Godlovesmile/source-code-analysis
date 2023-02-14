@@ -1,5 +1,6 @@
 import { reactive } from '../src/reactive'
 import { effect } from '../src/effect'
+import { vi } from 'vitest'
 
 describe('effect', () => {
   it('effect test', () => {
@@ -31,5 +32,26 @@ describe('effect', () => {
 
     expect(foo).toBe(12)
     expect(result).toBe(12)
+  })
+
+  it('scheduler', () => {
+    let dummy
+    let run
+    const scheduler = vi.fn(() => {
+      run = runner
+    })
+    const obj = reactive({ foo: 1 })
+    const runner = effect(() => {
+      dummy = obj.foo
+    }, { scheduler })
+
+    expect(scheduler).not.toHaveBeenCalled()
+    expect(dummy).toBe(1)
+    // should be called on first trigger
+    obj.foo++
+    expect(scheduler).toHaveBeenCalledTimes(1)
+    expect(dummy).toBe(1)
+    run()
+    expect(dummy).toBe(2)
   })
 })

@@ -1,9 +1,13 @@
 // reactivity/src/effect.ts
+import { extend } from '@mini-vue3/shared'
 
 export let activeEffect
 
-export function effect(fn) {
+export function effect(fn, options = {}) {
   const _effect = new ReactiveEffect(fn)
+
+  // 用户传进入 options 值, 合并到 _effect 对象上
+  extend(_effect, options)
 
   _effect.run()
 
@@ -72,7 +76,12 @@ export function trigger(target, key) {
 
   if (effects) {
     effects.forEach((effect) => {
-      effect.run()
+      // scheduler 可以让用户自己选择调用的时机, 这样就可以灵活的控制调用
+      if (effect.scheduler) {
+        effect.scheduler()
+      } else {
+        effect.run()
+      }
     })
   }
 }
