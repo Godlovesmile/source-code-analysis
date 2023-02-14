@@ -6,6 +6,11 @@ export function effect(fn) {
   const _effect = new ReactiveEffect(fn)
 
   _effect.run()
+
+  const runner = _effect.run.bind(_effect)
+  runner.effect = _effect
+
+  return runner
 }
 
 class ReactiveEffect {
@@ -17,7 +22,9 @@ class ReactiveEffect {
     // 将 _effect 赋给全局的变量 activeEffect
     activeEffect = this
     // fn 执行时, 内部用到的响应式数据的属性会被访问到, 就能触发 proxy 对象的 get 取值操作
-    this.fn()
+    const result = this.fn()
+
+    return result
   }
 }
 
