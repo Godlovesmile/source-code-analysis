@@ -18,6 +18,9 @@ export function effect(fn, options = {}) {
 }
 
 class ReactiveEffect {
+  active = true
+  deps = []
+
   constructor(fn) {
     this.fn = fn
   }
@@ -30,6 +33,22 @@ class ReactiveEffect {
 
     return result
   }
+
+  stop() {
+    if (this.active) {
+      cleanupEffect(this)
+    }
+    this.active = false
+  }
+}
+
+// 取消 effect
+function cleanupEffect(effect) {
+  effect.deps.forEach((dep) => {
+    dep.delete(effect)
+  })
+
+  effect.deps.length = 0
 }
 
 // 存储所有的依赖信息, 包含 target, key 和 _effect
@@ -48,17 +67,18 @@ export function track(target, key) {
   }
 
   // 再找到属性 key 所对应的 _effect 集合
-  let deps = depsMap.get(key)
+  let dep = depsMap.get(key)
 
-  if (!deps) {
-    depsMap.set(key, (deps = new Set()))
+  if (!dep) {
+    depsMap.set(key, (dep = new Set()))
   }
 
   // 如果 _effect 已经被收集过了, 则不再收集
-  let shouldTrack = !deps.has(activeEffect)
+  let shouldTrack = !dep.has(activeEffect)
 
   if (shouldTrack) {
-    deps.add(activeEffect)
+    dep.add(activeEffect)
+    activeEffect.deps.push(dep)
   }
 }
 
@@ -84,4 +104,11 @@ export function trigger(target, key) {
       }
     })
   }
+}
+
+/**
+ * 停止机制
+ */
+export function stop(runner) {
+  runner.effect.stop()
 }
