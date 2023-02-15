@@ -1,25 +1,10 @@
 // reactivity/src/effect.ts
 import { extend } from '@mini-vue3/shared'
 
-export let activeEffect
-
-export function effect(fn, options = {}) {
-  const _effect = new ReactiveEffect(fn)
-
-  // 用户传进入 options 值, 合并到 _effect 对象上
-  extend(_effect, options)
-
-  _effect.run()
-
-  const runner = _effect.run.bind(_effect)
-  runner.effect = _effect
-
-  return runner
-}
-
 class ReactiveEffect {
   active = true
   deps = []
+  onStop?: () => void
 
   constructor(fn) {
     this.fn = fn
@@ -37,6 +22,10 @@ class ReactiveEffect {
   stop() {
     if (this.active) {
       cleanupEffect(this)
+      
+      if (this.onStop) {
+        this.onStop()
+      }
     }
     this.active = false
   }
@@ -49,6 +38,22 @@ function cleanupEffect(effect) {
   })
 
   effect.deps.length = 0
+}
+
+export let activeEffect
+
+export function effect(fn, options = {}) {
+  const _effect = new ReactiveEffect(fn)
+
+  // 用户传进入 options 值, 合并到 _effect 对象上
+  extend(_effect, options)
+
+  _effect.run()
+
+  const runner = _effect.run.bind(_effect)
+  runner.effect = _effect
+
+  return runner
 }
 
 // 存储所有的依赖信息, 包含 target, key 和 _effect
