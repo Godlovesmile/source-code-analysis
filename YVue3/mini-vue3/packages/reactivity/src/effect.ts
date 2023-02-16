@@ -1,6 +1,9 @@
 // reactivity/src/effect.ts
 import { extend } from '@mini-vue3/shared'
 
+export let activeEffect
+export let shouldTrack = false
+
 class ReactiveEffect {
   active = true
   deps = []
@@ -11,10 +14,17 @@ class ReactiveEffect {
   }
 
   run() {
+    if (!this.active) return this.fn()
+
+    shouldTrack = true
     // 将 _effect 赋给全局的变量 activeEffect
     activeEffect = this
+
     // fn 执行时, 内部用到的响应式数据的属性会被访问到, 就能触发 proxy 对象的 get 取值操作
     const result = this.fn()
+
+    shouldTrack = false
+    activeEffect = undefined
 
     return result
   }
@@ -31,6 +41,13 @@ class ReactiveEffect {
   }
 }
 
+/**
+ * 是否正在收集
+ */
+function isTracking() {
+  return shouldTrack && activeEffect !== undefined
+}
+
 // 取消 effect
 function cleanupEffect(effect) {
   effect.deps.forEach((dep) => {
@@ -39,8 +56,6 @@ function cleanupEffect(effect) {
 
   effect.deps.length = 0
 }
-
-export let activeEffect
 
 export function effect(fn, options = {}) {
   const _effect = new ReactiveEffect(fn)
@@ -62,7 +77,7 @@ const targetMap = new WeakMap()
  * 依赖收集
  */
 export function track(target, key) {
-  if (!activeEffect) return
+  if (!isTracking()) return
 
   // 从缓存中找到 target 对象所有的依赖信息
   let depsMap = targetMap.get(target)
@@ -79,9 +94,9 @@ export function track(target, key) {
   }
 
   // 如果 _effect 已经被收集过了, 则不再收集
-  let shouldTrack = !dep.has(activeEffect)
+  let needTrack = !dep.has(activeEffect)
 
-  if (shouldTrack) {
+  if (needTrack) {
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
   }
