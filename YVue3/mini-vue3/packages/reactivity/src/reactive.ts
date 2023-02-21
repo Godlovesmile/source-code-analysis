@@ -1,7 +1,7 @@
 // reactivity/src/reactive.ts
 
 import { isObject } from '@mini-vue3/shared'
-import { mutableHandlers, readonlyHandlers } from './baseHandlers'
+import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers } from './baseHandlers'
 
 export const enum ReactiveFlags {
   IS_REACTIVE = '__v_isReactive',
@@ -11,6 +11,7 @@ export const enum ReactiveFlags {
 // 缓存响应式对象
 export const reactiveMap = new WeakMap()
 export const readonlyMap = new WeakMap()
+export const shallowReadonlyMap = new WeakMap()
 
 export function reactive(target: object) {
   return createReactiveObject(target, reactiveMap, mutableHandlers)
@@ -18,6 +19,10 @@ export function reactive(target: object) {
 
 export function readonly(target) {
   return createReactiveObject(target, readonlyMap, readonlyHandlers)
+}
+
+export function shallowReadonly(target) {
+  return createReactiveObject(target, shallowReadonlyMap, shallowReadonlyHandlers)
 }
 
 export function isReadonly(value) {

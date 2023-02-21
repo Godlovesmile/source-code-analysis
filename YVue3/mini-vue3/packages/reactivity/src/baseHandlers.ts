@@ -5,12 +5,13 @@ import { reactive, readonly, ReactiveFlags } from './reactive'
 const get = createGetter()
 const set = createSetter()
 const readonlyGet = createGetter(true)
+const shallowReadonlyGet = createGetter(true, true)
 
 /**
  * 高阶通用 getter 方法
  * @param isReadonly
  */
-function createGetter(isReadonly = false) {
+function createGetter(isReadonly = false, shallow = false) {
   return function get(target, key, receiver) {
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly
@@ -22,6 +23,10 @@ function createGetter(isReadonly = false) {
 
     if (!isReadonly) {
       track(target, key)
+    }
+
+    if (shallow) {
+      return res
     }
 
     if (isObject(res)) {
@@ -64,4 +69,15 @@ export const readonlyHandlers = {
     console.warn(`Set operation on key '${String(key)} failed: target is readonly'`)
     return true
   },
+}
+
+/**
+ * shallowReadonly 逻辑 reactive 走的 handler
+ */
+export const shallowReadonlyHandlers = {
+  get: shallowReadonlyGet,
+  set(target, key) {
+    console.warn(`Set operation on key "${String(key)}" failed: target is readonly`, target)
+    return true
+  }
 }
