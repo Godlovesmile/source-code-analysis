@@ -44,7 +44,7 @@ class ReactiveEffect {
 /**
  * 是否正在收集
  */
-function isTracking() {
+export function isTracking() {
   return shouldTrack && activeEffect !== undefined
 }
 
@@ -94,9 +94,12 @@ export function track(target, key) {
   }
 
   // 如果 _effect 已经被收集过了, 则不再收集
-  let needTrack = !dep.has(activeEffect)
+  trackEffects(dep)
+}
 
-  if (needTrack) {
+// 依赖收集代码抽离, 复用到 ref 依赖收集
+export function trackEffects(dep) {
+  if (!dep.has(activeEffect)) {
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
   }
@@ -114,6 +117,11 @@ export function trigger(target, key) {
   // 属性依赖的 _effect 列表
   let effects = depsMap.get(key)
 
+  triggerEffects(effects)
+}
+
+// 依赖触发代码抽离, 复用到 ref 依赖触发模块
+export function triggerEffects(effects) {
   if (effects) {
     effects.forEach((effect) => {
       // scheduler 可以让用户自己选择调用的时机, 这样就可以灵活的控制调用

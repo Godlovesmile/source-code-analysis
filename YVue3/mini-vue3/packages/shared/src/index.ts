@@ -27,3 +27,13 @@ export const isNumber = (value: unknown) => {
 export const isArray = Array.isArray
 
 export const extend = Object.assign
+
+/**
+ * 判断值是否改变
+ * @param value 
+ * @param oldValue 
+ * @returns 
+ */
+export function hasChanged(value, oldValue) {
+  return !Object.is(value, oldValue)
+}

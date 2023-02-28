@@ -20,5 +20,10 @@ describe('reactivity/ref', () => {
     expect(calls).toBe(1)
     expect(dummy).toBe(1)
     a.value = 2
+    expect(calls).toBe(2)
+    expect(dummy).toBe(2)
+    a.value = 2
+    expect(calls).toBe(2)
+    expect(dummy).toBe(2)
   })
 })
