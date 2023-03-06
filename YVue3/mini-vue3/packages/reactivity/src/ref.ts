@@ -66,3 +66,25 @@ export function isRef(value) {
 export function unRef(ref) {
   return isRef(ref) ? ref.value : ref
 }
+
+/** 
+ * 函数目的是帮助解析 ref
+*/
+const shallowUnwrapHandlers = {
+  get(target, key, receiver) {
+    return unRef(Reflect.get(target, key, receiver))
+  },
+  set(target, key, value, receiver) {
+    const oldValue = target[key]
+
+    if (isRef(oldValue) && !isRef(value)) {
+      return (target[key].value = value)
+    } else {
+      return Reflect.set(target, key, value, receiver)
+    }
+  },
+}
+
+export function proxyRefs(objectWithRefs) {
+  return new Proxy(objectWithRefs, shallowUnwrapHandlers)
+}
