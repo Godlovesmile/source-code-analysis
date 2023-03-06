@@ -1,5 +1,6 @@
-import { ref } from '../src/ref'
+import { ref, isRef, unRef } from '../src/ref'
 import { effect } from '../src/effect'
+import { reactive } from '../src/reactive'
 
 describe('reactivity/ref', () => {
   it('should hold a value', () => {
@@ -38,5 +39,18 @@ describe('reactivity/ref', () => {
     expect(dummy).toBe(1)
     a.value.count = 2
     expect(dummy).toBe(2)
+  })
+
+  it('isRef', () => {
+    expect(isRef(ref(1))).toBe(true)
+    expect(isRef(1)).toBe(false)
+    expect(isRef(reactive({ age: 1 }))).toBe(false)
+  })
+
+  it('unRef', () => {
+    const a = ref(1)
+
+    expect(unRef(a)).toBe(1)
+    expect(unRef(1)).toBe(1)
   })
 })

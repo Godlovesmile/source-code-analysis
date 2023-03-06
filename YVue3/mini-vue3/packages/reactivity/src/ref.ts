@@ -7,6 +7,7 @@ export class RefImpl {
   private _rawValue
   private _value
   public dep
+  public __v_isRef = true
 
   constructor(value) {
     this._rawValue = value
@@ -56,4 +57,12 @@ export function trackRefValue(ref) {
 // ref 依赖触发
 export function triggerRefValue(ref) {
   triggerEffects(ref.dep)
+}
+
+export function isRef(value) {
+  return !!value.__v_isRef
+}
+
+export function unRef(ref) {
+  return isRef(ref) ? ref.value : ref
 }
