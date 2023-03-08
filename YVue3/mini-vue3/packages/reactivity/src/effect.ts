@@ -4,13 +4,14 @@ import { extend } from '@mini-vue3/shared'
 export let activeEffect
 export let shouldTrack = false
 
-class ReactiveEffect {
+export class ReactiveEffect {
   active = true
   deps = []
   onStop?: () => void
 
-  constructor(fn) {
-    this.fn = fn
+  // ts constructor public 会自动生成属性
+  constructor(public fn, public scheduler?) {
+    // this.fn = fn
   }
 
   run() {
