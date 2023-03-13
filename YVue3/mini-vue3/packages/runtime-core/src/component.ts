@@ -1,0 +1,1 @@
+export function createComponentInstance(vnode, parent) {}
