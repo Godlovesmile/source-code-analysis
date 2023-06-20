@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest",
-    "dev": "node scripts/dev.js reactivity -f global"
+    "dev": "node scripts/dev.js reactivity -f global",
+    "build": "rollup -c --bundleConfigAsCjs"
   },
   "keywords": [],
   "author": "",
@@ -18,8 +19,11 @@
     "execa": "^6.1.0",
     "minimist": "^1.2.7",
     "rollup": "^3.14.0",
-    "rollup-plugin-typescript2": "^0.34.1",
     "typescript": "^4.9.5",
     "vitest": "^0.28.5"
+  },
+  "dependencies": {
+    "@rollup/plugin-typescript": "^11.1.1",
+    "tslib": "^2.5.3"
   }
 }
