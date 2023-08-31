@@ -6,15 +6,16 @@
     3. 窗口大小Resize。只需窗口调整完成后，计算窗口大小。防止重复渲染。
  */
 function debounce(fn, delay) {
-	let timer;
+	let timer
+
 	return function () {
 		if (timer) {
-			clearTimeout(timer);
+			clearTimeout(timer)
 		}
 
-		let args = arguments;
+		let args = arguments
 		timer = setTimeout(() => {
-			fn.apply(this, args);
-		}, delay);
+			fn.apply(this, args)
+		}, delay)
 	};
 }
